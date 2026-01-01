@@ -1,0 +1,381 @@
+/* universal styles */
+
+:root {
+    /* default (dark) mode color palette */
+    --bg:#1e2127;
+  --panel:#2a2e34;
+  --muted:#9aa3ad;
+  --accent:#ff4d4d;
+    --nav: #2a2c32;       
+    
+    /* visuals */
+    --glow: 0 6px 20px rgba(255, 77, 77, 0.12); 
+    --glass: rgba(255, 255, 255, 0.03); 
+    --radius: 16px; 
+    --text-color: #ffffff; 
+    
+    font-family: Inter, sans-serif, system-ui;
+    font-size: 16px; 
+}
+
+
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin:0;
+  padding:0;
+}
+/* ---- DARK MODE TOGGLE ---------- */
+html, body {
+    height: 100%;
+}
+
+/* grid */
+nav {
+    grid-area: nav;
+}
+header {
+    grid-area: header;
+    text-align: center;
+}
+main {
+    grid-area:main;
+}
+footer {
+    grid-area: footer;
+}
+.grid-container {
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(255,77,77,0.03), transparent),
+              radial-gradient(900px 500px at 90% 90%, rgba(255,77,77,0.02), transparent),
+              var(--bg); 
+    color: var(--text-color); 
+    display: grid;
+    grid-template-areas:
+    "nav"
+    "header"
+    "main"
+    "footer";
+    grid-template-rows: 10vh auto 1fr auto;
+    height:100vh;
+    /* gia decorative cards */    
+    position: relative;
+    overflow: hidden;
+    
+}
+
+/* theme switch icon styling */
+svg {
+    width:30px;
+    height:30px;
+    fill: var(--text-color); 
+}
+
+/* ---- TOP NAV AND FOOTER ----- */
+nav#top-nav ul, footer ul {
+    background-color:var(--nav);
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+}
+/* PROXEIRI LISI GIA NAV POY EINAI MIKROTERO SE HEIGHT ??? */
+
+nav#top-nav ul {
+  padding:10px;
+}
+nav ul {
+    justify-content: flex-end;
+}
+footer ul {
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+footer ul li a{
+    text-decoration: none;
+    display: block;
+    padding:10px;
+    color: var(--text-color); 
+}
+footer ul li a:hover {
+    background-color: var(--accent);
+    color: white;
+}
+#top-nav ul li svg {
+    cursor: pointer;
+}
+
+/* ---- MAIN CARD ----- */
+main#main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    background-color: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: var(--glow); 
+   /*positioning */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 170px;
+    gap: 20px;
+    border-radius: var(--radius); 
+}
+
+/* button styling */
+button {
+    background-color: var(--accent);
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(255,77,77,0.4); 
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+button:hover {
+    background-color: #852626;
+}
+
+button:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 15px rgba(255,77,77,0.4);
+}
+
+/* decorative cards */
+.decorative-card {
+    /* removed from grid layout */
+    position: fixed; 
+    z-index: 2; 
+  
+    width: 130px;
+    height: 200px;
+    
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
+    border-radius: var(--radius); 
+}
+
+.decorative-card object {
+    width: 100%;
+    height: 100%;
+    display: block; 
+}
+
+.card-top-left {
+    top: -50px; 
+    left: -50px;
+    transform: rotate(-15deg); 
+}
+
+.card-bottom-right {
+    bottom: -50px;
+    right: -50px;
+    transform: rotate(-15deg); 
+}
+
+
+/* --- RULES MODAL --- */
+
+.modal-overlay {
+  position:fixed;
+  inset:0; 
+  background:rgba(2,4,6,0.6);
+  backdrop-filter:blur(4px);
+  display:none; 
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index: 20; 
+}
+
+.modal-overlay.open {
+  display:flex 
+}
+
+.modal-content{
+  width:100%;
+  max-width:720px;
+  
+  background:linear-gradient(180deg,#0f1316,#0b0f12);
+  border-radius:14px;
+  padding:22px;
+ 
+  border:1px solid rgba(255,255,255,0.04);
+  color: var(--text-color);
+}
+
+.rules-list {
+  list-style: none;
+  display:grid;
+  gap:10px;
+  margin-top: 15px;
+}
+
+.rules-list li {
+  padding:10px;
+  border-radius:10px;
+  background:linear-gradient(180deg, rgb(0, 0, 0), transparent);
+  border:1px solid rgba(255,255,255,0.02)
+}
+
+.rules-list strong {
+  color:var(--accent, #ff4d4d)
+}
+
+.modal-footer {
+  margin-top:14px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.cards-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    min-height: 120px;
+    padding: 20px;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 40px;
+}
+
+#table-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.table-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    position: relative;
+}
+
+.deck-container {
+    position: relative;
+    width: 100px;
+    height: 140px;
+}
+
+.deck-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.deck-count {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.cards-stack {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    min-height: 150px;
+}
+
+.card_img, .card_img_back {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.card_img:hover {
+    transform: translateY(-10px);
+}
+#table {
+    position: relative;
+    height: 200px;
+    width: 150px;
+}
+#table .card_img {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#table .card_img:nth-child(1) {
+    z-index: 1;
+}
+
+#table .card_img:nth-child(2) {
+    z-index: 2;
+    margin-left: 12px;
+    margin-top: 6px;
+}
+
+#table .card_img:nth-child(3) {
+    z-index: 3;
+    margin-left: 24px;
+    margin-top: 12px;
+}
+
+#table .card_img:nth-child(4) {
+    z-index: 4;
+    margin-left: 36px;
+    margin-top: 18px;
+}
+.active-turn {
+    color: #2ecc71;
+    text-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+    font-weight: bold;
+}
+
+.play-input-area {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#card-input {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-color);
+    width: 300px;
+}
+
+#card-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#card-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px rgba(255, 77, 77, 0.3);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+#play-btn {
+    padding: 10px 25px;
+    font-size: 16px;
+}
+
