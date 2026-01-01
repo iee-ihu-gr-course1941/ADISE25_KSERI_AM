@@ -1,73 +1,73 @@
--- περιγραφή API --
+## <u>Περιεχόμενα</u>
+- <u>**[Περιγραφή API](#περιγραφή-api)**</u>
+    - <u>**[Methods](#methods)**</u>
+        - <u>**[Board](#board)**</u>
+            - <u>[Ανάγνωση Board](#ανάγνωση-board)</u>
+            - <u>[Αρχικοποίηση Board](#αρχικοποίηση-board)</u>
+- <u>**[Πίνακες Βάσης Δεδομένων](#πίνακες-βάσης-δεδομένων)**</u>
+   - <u>**[board](#1-board)**</u>
+   - <u>**[deck](#2-deck)**</u>
+   - <u>**[players](#3-players)**</u>
+   - <u>**[game-status](#4game-status)**</u>
 
-BASE URL που εχω τα αρχεια στον υπολογιστη μου 
-http://localhost/ADISE25_KSERI_AM/kseri.php
-ολα τα endpoints αναφερονται στο συγκεκριμενο url
+---
 
-Περιγραφή API
+# Περιγραφή API
+## <u>Methods</u>
 
-Methods
+---
 
-Board
-Ανάγνωση Board
+### <u>Board<u>
 
-GET /board/
+### **Ανάγνωση Board**
+`GET /board/`
 
-Επιστρέφει την τρέχουσα κατάσταση του board.
+<br> Επιστρέφει την τρέχουσα κατάσταση της τράπουλας και των θέσεων όλων των καρτών στο τραπέζι.
 
-POST /board/
+### **Αρχικοποίηση Board**
+`POST /board/`
+
+<br> Αρχικοποιεί το Board. Γίνονται reset όλες οι κάρτες (επιστροφή στο deck) και προετοιμάζεται το παιχνίδι. Επιστρέφει την αρχική κατάσταση του Board.
+
+---
+.... ΣΥΝΕΧΕΙΑ ΜΕ ΤΑ ΥΠΟΛΟΙΠΑ ΕΝΔΠΟΙΝΤΣ
+## <u>Πίνακες Βάσης Δεδομένων</u>
+
+### 1. board
+Περιέχει πληροφορίες σχετικά με την κατάσταση του ταμπλό του παιχνιδιού.
+
+| Attribute | Description | Values |
+| :--- | :--- | :--- |
+| **card_id** | Η κάρτα που κινείται | `1`,`2`,`3`,`4`,`5`,`6`,.... |
+| **pos** | Ορίζει την τοποθεσία της κάρτας | `deck`, `hand_A`, `hand_B`, `table`, `pile_A`, `pile_B` |
+| **weight** | Η θέση της κάρτας πάνω στη στοίβα | `0`,`1`,`2`,`3`,`4`,`5`... |
+
+### 2. deck
+Περιέχει τις πληροφορίες για την τράπουλα.
+
+| Attribute | Description | Values |
+| :--- | :--- | :--- |
+| **card_id** | Μοναδικό ID κάρτας | `1`,`2`,`3`,`4`,`5`,`6`,.... |
+| **card_rank** | Η αξία της κάρτας | `A`, `2`, `3`, ..., `K` |
+| **card_suit** | Το σύμβολο της κάρτας | `Club`, `Diamond`, `Heart`, `Spade` |
+
+### 3. players
+Στοιχεία και κατάσταση των παικτών.
+
+| Attribute | Description | Values |
+| :--- | :--- | :--- |
+| **username** | Το όνομα χρήστη του παίκτη | `varchar` |
+| **player** | Ορίζει αν ο παίκτης είναι ο A ή ο B | `A`, `B` |
+| **token** | Μοναδικό κλειδί αυθεντικοποίησης | `hex` |
+| **last_action** | Timestamp τελευταίας ενέργειας | `timestamp` |
 
 
+### 4. game_status
+Η συνολική κατάσταση της εξέλιξης του παιχνιδιού.
 
-
----------------- ΡΟΗ ΓΙΑ FRONT END --------------------
-1. front -> χρηστης εισαγει το username του (σε καποιο input field ) και παταει εναρξη παιχνιδιου
-back -> καλω API endpoint PUT /player/A ή /Β , το οποιο επιστρεφει το token του παικτη
-2. front -> αποθηκευω το token μεσω js και το player_id 
-3. js polling 
-back -> GET /status . αναμονη αντιπαλου, ελεγχεται σε λουπα αν το status εγινε started
-4. status = started 
-back -> GET /board 
-εναρξη παιχνιδιου , μοιραζονται τα αρχικα φυλλα κτλ.
-
-
------ ΚΑΝΟΝΕΣ ΓΙΑ ΝΑ ΛΕΙΤΟΥΡΓΗΣΕΙ ------
-θα δημιουργησεις locally μεσω του localhost/phpmyadmin την βαση με ονομα 'kseri_db' . εκει θα κανεις import το αρχειο kseri_db.sql ή θα κανεις copy-paste ολες τις εντολες sql του αρχειου
-ετσι θα εχεις την βαση την οποια χρησιμοποιουσα 
-
-
-
-
-
-
--------- DATABASE TABLES ------------
-Database Tables
-1. board -> contains information about the board of the game 
-
-Attribute        Description                Values
-card_id    card that is being moved 
-pos        defines where the card is       deck,hand_A,hand_B,table,pile_A,pile_B
-weight     position of card in the stack     
-
-2. players
-
-Attribute        Description                               Values
-username         player's username                         varchar
-player           defines if player is A or B               'A', 'B'
-token            unique authentication token                 hex 
-last_action      timestamp of the last action a player did  timestamp
-
-3. deck
-
-Attribute        Description                               Values
-card_id          unique card id                          
-card_rank        card rank                         A,2,3,4,5,6,7,8,9,10,J,Q,K
-card_suit        card suit                         Club,Diamond,Heart,Spade
-
-4. game_status
-
-Attribute        Description                               Values
-status       status of the game     not active, initialized, started,ended,aborded  
-p_turn       which player's turn it is           'A', 'B'
-result       which player won                    'A','B', 'D' (draw)
-last_change      timestamp of last change               timestamp      
+| Attribute | Description | Values |
+| :--- | :--- | :--- |
+| **status** | Φάση του παιχνιδιού | `not active`, `initialized`, `started`, `ended`, `aborted` |
+| **p_turn** | Σειρά παίκτη | `'A'`, `'B'` |
+| **result** | Νικητής | `'A'`, `'B'`, `'D'` (draw) |
+| **last_change** | Timestamp τελευταίας αλλαγής | `timestamp` |
