@@ -38,9 +38,9 @@
 
 | Attribute | Description | Values |
 | :--- | :--- | :--- |
-| **card_id** | Η κάρτα που κινείται | `1`,`2`,`3`,`4`,`5`,`6`,.... |
+| **card_id** | Κάρτα που κινείται | `1`,`2`,`3`,`4`,`5`,`6`,.... |
 | **pos** | Ορίζει την τοποθεσία της κάρτας | `deck`, `hand_A`, `hand_B`, `table`, `pile_A`, `pile_B` |
-| **weight** | Η θέση της κάρτας πάνω στη στοίβα | `0`,`1`,`2`,`3`,`4`,`5`... |
+| **weight** | Θέση κάρτας στη στοίβα | `0`,`1`,`2`,`3`,`4`,`5`... |
 
 ### 2. deck
 Περιέχει τις πληροφορίες για την τράπουλα.
@@ -48,18 +48,18 @@
 | Attribute | Description | Values |
 | :--- | :--- | :--- |
 | **card_id** | Μοναδικό ID κάρτας | `1`,`2`,`3`,`4`,`5`,`6`,.... |
-| **card_rank** | Η αξία της κάρτας | `A`, `2`, `3`, ..., `K` |
-| **card_suit** | Το σύμβολο της κάρτας | `Club`, `Diamond`, `Heart`, `Spade` |
+| **card_rank** | Αξία κάρτας | `A`, `2`, `3`, ..., `K` |
+| **card_suit** | Σύμβολο κάρτας | `Club`, `Diamond`, `Heart`, `Spade` |
 
 ### 3. players
 Στοιχεία και κατάσταση των παικτών.
 
 | Attribute | Description | Values |
 | :--- | :--- | :--- |
-| **username** | Το όνομα χρήστη του παίκτη | `varchar` |
+| **username** | Oνομα παίκτη | `varchar` |
 | **player** | Ορίζει αν ο παίκτης είναι ο A ή ο B | `A`, `B` |
-| **token** | Μοναδικό κλειδί αυθεντικοποίησης | `hex` |
-| **last_action** | Timestamp τελευταίας ενέργειας | `timestamp` |
+| **token** | Μοναδικό token | `hex` |
+| **last_action** | Timestamp | `timestamp` |
 
 
 ### 4. game_status
@@ -70,4 +70,5 @@
 | **status** | Φάση του παιχνιδιού | `not active`, `initialized`, `started`, `ended`, `aborted` |
 | **p_turn** | Σειρά παίκτη | `'A'`, `'B'` |
 | **result** | Νικητής | `'A'`, `'B'`, `'D'` (draw) |
-| **last_change** | Timestamp τελευταίας αλλαγής | `timestamp` |
+| **last_change** | Timestamp | `timestamp` |
+
