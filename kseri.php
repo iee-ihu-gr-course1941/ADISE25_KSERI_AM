@@ -1,24 +1,52 @@
 <?php
 
+ob_start(); // Ξεκινάει την αποθήκευση του output στη μνήμη
 require_once "lib/dbconnect.php"; 
 require_once "lib/board.php";
 require_once "lib/game.php";
 require_once "lib/users.php";
-
-// πάρε το HTTP method, το request και το input
+ob_clean(); // Διαγράφει οτιδήποτε "βρώμικο" (όπως το 2ms1) βγήκε από τα παραπάνω αρχεία
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+// kseri.php - Στην κορυφή του αρχείου
+// kseri.php - Στην κορυφή, μετά τα require
 $method = $_SERVER['REQUEST_METHOD'];
-$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
-$input = json_decode(file_get_contents('php://input'),true);
+$request_path = $_SERVER['PATH_INFO'] ?? '';
+$request = explode('/', trim($request_path, '/'));
 
-if($input==null) {
-    $input=[];
+// Χρησιμοποιούμε έναν πιο σίγουρο έλεγχο για το reset
+if ($method === 'POST' && (isset($request[0]) && $request[0] === 'reset')) {
+    global $mysqli;
+
+    try {
+        // 1. Καθαρισμός Βάσης - Χρησιμοποιούμε IS NOT NULL για να μην σκάει αν είναι ήδη NULL
+        $mysqli->query("UPDATE players SET username=NULL, token=NULL");
+        $mysqli->query("UPDATE board SET pos='deck', weight=NULL");
+        $mysqli->query("UPDATE game_status SET status='not active', p_turn='A', result=NULL");
+
+        // 2. Καθαρισμός Session
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        session_unset();
+        session_destroy();
+
+        header('Content-Type: application/json');
+        echo json_encode(["status" => "success"]);
+        exit;
+    } catch (Exception $e) {
+        header('HTTP/1.1 500 Internal Server Error');
+        echo json_encode(["errormesg" => $e->getMessage()]);
+        exit;
+    }
 }
 
-// διαχείριση token από header ή input
+// 2. Προετοιμασία εισόδου για τον Router
+$input = json_decode(file_get_contents('php://input'), true);
+if ($input == null) $input = [];
+
 if (isset($_SERVER['HTTP_APP_TOKEN'])) {
-    $input['token']=$_SERVER['HTTP_APP_TOKEN'];
-} else if (!isset($input['token'])) {
-    $input['token']='';
+    $input['token'] = $_SERVER['HTTP_APP_TOKEN'];
+} elseif (!isset($input['token'])) {
+    $input['token'] = '';
 }
 
 // κεντρικός ρουτερ
@@ -50,7 +78,7 @@ switch ($r=array_shift($request)) {
         }
         break;
     case 'player': 
-        handle_player($method, $request, $input);
+        handle_player('PUT', $request, $input);
         break;
     case 'reset':
         handle_reset($method);
@@ -122,4 +150,3 @@ function handle_reset($method) {
     }
 }
 
-?>

@@ -16,4 +16,3 @@ if ($mysqli -> connect_error) {
 
 // echo ("Connected successfully!");
 
-?>

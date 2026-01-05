@@ -17,7 +17,7 @@ function login_to_game() {
 
     $.ajax({
         url: "kseri.php/player/" + p, 
-        method: 'PUT',
+        method: 'POST',
         dataType: "json",
         contentType: 'application/json',
         data: JSON.stringify({ username: user, player: p }),
@@ -164,3 +164,41 @@ function login_error(data) {
 
 function openRules(){ $('#rules-modal').addClass('open'); }
 function closeRulesFn(){ $('#rules-modal').removeClass('open'); }
+
+$(document).on('keydown', function(e) {
+    if (e.shiftKey && (e.code === 'KeyR' || e.keyCode === 82)) { 
+        if (confirm("Πλήρης επαναφορά παιχνιδιού;")) {
+            console.log("Starting Reset...");
+
+            $.ajax({
+                url: "kseri.php/reset", 
+                method: 'POST',
+                success: function(response) {
+                    // 1. Σταματάμε τυχόν timers που τρέχουν (game_status_update)
+                    let id = window.setTimeout(function() {}, 0);
+                    while (id--) { window.clearTimeout(id); }
+
+                    // 2. Καθαρίζουμε την μνήμη του browser
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    me = {}; 
+
+                    // 3. ΣΩΣΤΟ REDIRECT: Επιστροφή στην αρχική σελίδα HTML
+                    // Μην βάζεις kseri.php εδώ! Βάλε το όνομα του αρχείου της αρχικής σου σελίδας.
+                    window.location.href = "main_menu.html"; 
+                },
+                error: function(xhr) {
+                    alert("Σφάλμα κατά το Reset: " + xhr.responseText);
+                }
+            });
+        }
+    }
+});
+function login_error(xhr) {
+    // Εκτύπωση στο console για να δεις ακριβώς τι περιέχει το xhr.responseText
+    console.log("Server output:", xhr.responseText);
+    
+    // Αν το response ξεκινάει με imsl, τότε το JS δεν μπορεί να το διαβάσει ως JSON
+    alert("Ο server έστειλε μη έγκυρα δεδομένα. Δες το Console (F12). \nΠεριεχόμενο: " + xhr.responseText);
+}
+

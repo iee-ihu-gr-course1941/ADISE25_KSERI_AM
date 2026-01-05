@@ -222,6 +222,15 @@ CREATE TABLE `players` (
   `last_action` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+-- Επιτρέπει στη στήλη username να δέχεται NULL (για να δουλεύει το reset)
+ALTER TABLE `players` MODIFY `username` VARCHAR(50) NULL;
+
+-- Επιτρέπει στη στήλη token να δέχεται NULL
+ALTER TABLE `players` MODIFY `token` VARCHAR(100) NULL;
+
+-- Καθαρισμός των τωρινών δεδομένων για σιγουριά
+UPDATE `players` SET `username` = NULL, `token` = NULL;
 --
 -- Dumping data for table `players`
 --
