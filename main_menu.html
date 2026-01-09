@@ -55,11 +55,13 @@
     <div class="game-container">
         
         <div id="opponent-area">
-            <div class="player-label">
-                Αντίπαλος: <span id="opponent-name-val">...</span>
-            </div>
-            <div id="opponent_hand" class="cards-row"></div>
-        </div>
+    <div class="player-label">
+        Αντίπαλος: <span id="opponent-name-val">...</span> | 
+        Σκορ: <span id="score-opponent" style="color: var(--accent);">0</span> | 
+        Ξερές: <span id="kseres-opp" style="color: var(--accent);">0</span>
+    </div>
+    <div id="opponent_hand" class="cards-row"></div>
+</div>
 
         <div id="table-area">
             <div class="table-center">
@@ -72,18 +74,19 @@
         </div>
 
         <div id="player-area">
-            <div class="player-label">
-                <div id="game_info" style="margin-top: 10px; font-weight: bold;"></div>
-                Εσείς: <span id="my-name-val"></span> 
-                | Token: <small id="my-token-val" style="color:#777;"></small>
-            </div>
-            <div id="my_hand" class="cards-row"></div>
-            <div class="play-input-area">
-                <input type="text" id="card-input" placeholder="Εισάγετε μία κάρτα..." >
-                <button id="play-btn" onclick="playCardFromInput()">Παίξε κάρτα</button>
-                <button id="reset-btn" onclick="resetGame()">Επαναφορά παιχνιδιού</button>
-            </div>
-        </div>
+    <div class="player-label">
+        <div id="game_info" style="margin-bottom: 10px; font-weight: bold;"></div>
+        Εσείς: <span id="my-name-val"></span> | 
+        Σκορ: <span id="score-me" style="color: #2ecc71;">0</span> | 
+        Ξερές: <span id="kseres-me" style="color: #2ecc71;">0</span> |
+        Χρόνος: <span id="timer-val" style="color: var(--accent);">-</span>
+    </div>
+    
+    <div id="my_hand" class="cards-row"></div>
+    <div class="play-input-area">
+        <button id="reset-btn" onclick="resetGame()">Επαναφορά παιχνιδιού</button>
+    </div>
+</div>
 
     </div>
 </section>

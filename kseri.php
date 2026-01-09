@@ -1,152 +1,117 @@
 <?php
-
-ob_start(); // Ξεκινάει την αποθήκευση του output στη μνήμη
 require_once "lib/dbconnect.php"; 
 require_once "lib/board.php";
 require_once "lib/game.php";
 require_once "lib/users.php";
-ob_clean(); // Διαγράφει οτιδήποτε "βρώμικο" (όπως το 2ms1) βγήκε από τα παραπάνω αρχεία
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-// kseri.php - Στην κορυφή του αρχείου
-// kseri.php - Στην κορυφή, μετά τα require
+
+// αναγνώριση μεθόδου
 $method = $_SERVER['REQUEST_METHOD'];
-$request_path = $_SERVER['PATH_INFO'] ?? '';
-$request = explode('/', trim($request_path, '/'));
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$input = json_decode(file_get_contents('php://input'),true);
 
-// Χρησιμοποιούμε έναν πιο σίγουρο έλεγχο για το reset
-if ($method === 'POST' && (isset($request[0]) && $request[0] === 'reset')) {
-    global $mysqli;
-
-    try {
-        // 1. Καθαρισμός Βάσης - Χρησιμοποιούμε IS NOT NULL για να μην σκάει αν είναι ήδη NULL
-        $mysqli->query("UPDATE players SET username=NULL, token=NULL");
-        $mysqli->query("UPDATE board SET pos='deck', weight=NULL");
-        $mysqli->query("UPDATE game_status SET status='not active', p_turn='A', result=NULL");
-
-        // 2. Καθαρισμός Session
-        if (session_status() === PHP_SESSION_NONE) session_start();
-        session_unset();
-        session_destroy();
-
-        header('Content-Type: application/json');
-        echo json_encode(["status" => "success"]);
-        exit;
-    } catch (Exception $e) {
-        header('HTTP/1.1 500 Internal Server Error');
-        echo json_encode(["errormesg" => $e->getMessage()]);
-        exit;
-    }
+if($input==null) {
+   $input=[]; 
 }
-
-// 2. Προετοιμασία εισόδου για τον Router
-$input = json_decode(file_get_contents('php://input'), true);
-if ($input == null) $input = [];
 
 if (isset($_SERVER['HTTP_APP_TOKEN'])) {
-    $input['token'] = $_SERVER['HTTP_APP_TOKEN'];
-} elseif (!isset($input['token'])) {
-    $input['token'] = '';
+    $input['token']=$_SERVER['HTTP_APP_TOKEN'];
+} else if (!isset($input['token'])) {
+    $input['token']='';
 }
 
-// κεντρικός ρουτερ
 switch ($r=array_shift($request)) {
-    // αν το request είναι 'board'
+    // endpoint board
     case 'board' : 
         switch ($b=array_shift($request)) {
-            // αν δεν υπάρχει επιπλέον διαδρομή, δηλαδή /board
             case '':
             case null: 
-                handle_board($method, $input);
+                handle_board($method, $input); 
                 break;
+            // endpoint board/card/ιδ -> καλω handle_card
             case 'card': 
-                
-                handle_card($method, $request[0], $input);
+                handle_card($method, $request[0], $input); 
                 break;
             default: 
-                header("HTTP/1.1 404 Not Found");
-                print "<h1>Page not found (404)</h1>";
+                header("HTTP/1.1 404 Not Found"); 
                 break;
         }
         break;
+        // endpoint /status
     case 'status': 
-        if(sizeof($request)==0) {
-            handle_status($method);
-        } else {
-            header("HTTP/1.1 404 Not Found");
-            print "<h1>Page not found (404)</h1>";
-        }
+        handle_status($method); 
         break;
+        // endpoint /player
     case 'player': 
-        handle_player('PUT', $request, $input);
+        handle_player($method, $request, $input); 
         break;
+        // endpoint /reset
     case 'reset':
-        handle_reset($method);
+        handle_reset($method); 
         break;
-    default:     
-        header("HTTP/1.1 404 Not Found");
-        print "<h1>Page not found (404)</h1>";
-        exit;
+    default: 
+        header("HTTP/1.1 404 Not Found"); 
+        break;
 }
-
 
 function handle_board($method, $input) {
+    // εμφάνισε τρέχουσα κατάσταση board
     if($method=='GET') {
-        show_board();
-    } else if ($method=='POST') {
-        reset_board();
-    } else {
-        header('HTTP/1.1 405 Method Not Allowed');
-        print "<h1>Method Not Allowed (405)</h1>";
-    }
-}
-
-function handle_card($method, $card_id, $input) {
-    if($method=='PUT') {
-        play_card($card_id, $input['token']);
-    } else {
-        header('HTTP/1.1 405 Method Not Allowed');
-        print "<h1>Method Not Allowed (405)</h1>";
-    }
-}
-
-function handle_player($method, $p, $input) {
-    switch ($b=array_shift($p)) {
-        case '':
-        case null: 
-            if($method=='GET') {
-                show_users();
-            } else {
-                header("HTTP/1.1 400 Bad Request"); 
-                print json_encode(['errormesg'=>"Method $method not allowed here."]);
-            }
-            break;
-        case 'A': 
-        case 'B': 
-            handle_user($method, $b, $input);
-            break;
-        default: 
-            header("HTTP/1.1 404 Not Found");
-            print json_encode(['errormesg'=>"Player $b not found."]);
-            break;
-    }
-}
-
-function handle_status($method) {
-    if($method=='GET') {
-        show_status();
-    } else {
-        header('HTTP/1.1 405 Method Not Allowed');
-        print "<h1>Method Not Allowed (405)</h1>";
+         show_board(); 
+    } 
+    // κάνε reset το board
+    else if ($method=='POST') {
+         reset_board(); show_board();
+    } 
+    else { 
+        header('HTTP/1.1 405 Method Not Allowed'); 
     }
 }
 
 function handle_reset($method) {
-    if($method=='POST') {
-        reset_game_all();
-    } else {
-        header('HTTP/1.1 405 Method Not Allowed');
-        print "<h1>Method Not Allowed (405)</h1>";
+    // κάνε reset τα πάντα
+    if($method=='POST') { 
+        reset_game_all(); 
+    } 
+    else { 
+        header('HTTP/1.1 405 Method Not Allowed'); 
     }
 }
 
+function handle_card($method, $card_id, $input) {
+    // ο χρήστης παίζει τη συγκεκριμένη κάρτα
+    if($method=='PUT') { 
+        play_card($card_id, $input['token']); 
+    } 
+    else { 
+        header('HTTP/1.1 405 Method Not Allowed'); 
+    }
+}
+
+function handle_player($method, $p, $input) {
+    $b=array_shift($p);
+    if($b=='' || $b==null) {
+        // endpoint /player
+        if($method=='GET') {
+            show_users(); 
+        } 
+        else {
+            header("HTTP/1.1 400 Bad Request"); 
+        }
+        // endpoint /player/A ή /player/B
+    } else if($b=='A' || $b=='B') {
+        handle_user($method, $b, $input);
+    } else { 
+        header("HTTP/1.1 404 Not Found"); 
+    }
+}
+
+function handle_status($method) {
+    // επιστρέφει την κατάσταση παιχνιδιού
+    if($method=='GET') { 
+        show_status();
+    } 
+    else { 
+        header('HTTP/1.1 405 Method Not Allowed');
+     }
+}
+?>

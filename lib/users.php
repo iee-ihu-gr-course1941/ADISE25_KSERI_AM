@@ -3,13 +3,15 @@
 require_once "lib/game.php";
 
 function handle_user($method, $p, $input) {
+    // επιστροφή στοιχείων παίκτη
     if($method == 'GET') {
-        show_user($p);
-    } else if($method == 'PUT') { 
+        show_user($p); 
+    // εγγραφή ή ενημέρωση στοιχείων παίκτη
+    } else if($method == 'POST') { 
         set_user($p, $input);
     }
 }
-
+// εμφάνιση στοιχείων ενός συγκεκριμένου παίκτη (π.χ 'Α')
 function show_user($p) {
     global $mysqli;
     $sql = 'select username, player from players where player=?';
@@ -21,6 +23,7 @@ function show_user($p) {
     print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
+// εμφάνιση στοιχείων όλων των παικτών
 function show_users() {
     global $mysqli;
     $sql = 'select username, player from players';
@@ -32,56 +35,60 @@ function show_users() {
 }
 
 function set_user($p, $input) {
-    global $mysqli;
-    
+    // δόθηκε username?
     if(!isset($input['username']) || $input['username'] == '') {
         header("HTTP/1.1 400 Bad Request");
-        echo json_encode(['errormesg' => "No username given."]);
+        print json_encode(['errormesg' => "No username given."]);
         exit;
     }
-    
-    $username = $mysqli->real_escape_string($input['username']);
-    $player_id = $mysqli->real_escape_string($p);
+    $username = $input['username'];
+    global $mysqli;
 
-    // 1. Έλεγχος αν η θέση είναι κενή (με απλό query για αποφυγή του mysql.proc error)
-    $res = $mysqli->query("SELECT COUNT(*) as c FROM players WHERE player='$player_id' AND username IS NOT NULL");
-    $r = $res->fetch_assoc();
-    
-    if($r['c'] > 0) {
+    // έλεγχος αν υπάρχει ήδη ενεργός παίκτης στη θέση Α ή Β
+    $sql = 'select count(*) as c 
+            from players 
+            where player=? 
+            and username is not null';
+    $st = $mysqli->prepare($sql);
+    $st->bind_param('s', $p);
+    $st->execute();
+    $res = $st->get_result();
+    $r = $res->fetch_all(MYSQLI_ASSOC);
+    // σφάλμα αν υπάρχει 
+    if($r[0]['c'] > 0) {
         header("HTTP/1.1 400 Bad Request");
-        echo json_encode(['errormesg' => "Player $p is already set."]);
+        print json_encode(['errormesg' => "Player $p is already set. Please select another player."]);
         exit;
     }
 
-    // 2. Δημιουργία ΝΕΟΥ Token (Χρήση mysqli->query αντί για prepare)
-    // Αυτό παρακάμπτει το σφάλμα "Column count of mysql.proc is wrong"
-    $token = md5($username . microtime() . rand());
-    $sql = "UPDATE players 
-            SET username='$username', token='$token', last_action=NOW() 
-            WHERE player='$player_id'";
-    
-    if(!$mysqli->query($sql)) {
-        header("HTTP/1.1 500 Internal Server Error");
-        echo json_encode(['errormesg' => "Database Error: " . $mysqli->error]);
-        exit;
-    }
+    // αν δεν υπάρχει ήδη εγγεγραμένος χρήστης στη θέση Α ή Β,
+    // τοτε ορίζω το username, δημιουργώ το τοκεν με τον μδ5 
+    $sql = 'update players 
+            set username=?, token=md5(CONCAT(?, NOW())), last_action=NOW()
+            where player=?';
+    $st2 = $mysqli->prepare($sql);
+    $st2->bind_param('sss', $username, $username, $p);
+    $st2->execute();
 
-    // 3. Ενημέρωση status
+    // ενημερωση καταστασης παιχνιδιου
     update_game_status();
 
-    // 4. Επιστροφή των νέων στοιχείων
-    $res = $mysqli->query("SELECT * FROM players WHERE player='$player_id'");
-    $data = $res->fetch_all(MYSQLI_ASSOC);
-    
+    // επιστροφη νεων στοιχειων παικτη σε json
+    $sql = 'select * from players where player=?';
+    $st = $mysqli->prepare($sql);
+    $st->bind_param('s', $p);
+    $st->execute();
+    $res = $st->get_result();
     header('Content-type: application/json');
-    echo json_encode($data); 
-    exit;
+    print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
 // επιστρέφει τον παίκτη στον οποίο ανήκει το token
 function current_player($token) {
     global $mysqli;
-    if($token == null) { return(null); }
+    if($token == null) {
+         return(null);
+    }
     $sql = 'select * from players where token=?';
     $st = $mysqli->prepare($sql);
     $st->bind_param('s', $token);
@@ -92,3 +99,4 @@ function current_player($token) {
     }
     return(null);
 }
+?>

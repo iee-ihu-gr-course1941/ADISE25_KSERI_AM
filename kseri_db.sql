@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 01, 2026 at 06:14 PM
+-- Generation Time: Jan 07, 2026 at 10:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -26,25 +26,9 @@ DELIMITER $$
 -- Procedures
 --
 CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_game` ()   BEGIN
-    -- επαναφορά board
     UPDATE `board` SET `pos`='deck', `weight`=NULL;
-    
-    -- επαναφορά παικτών
-    UPDATE `players` SET `username`=NULL, `token`=NULL;
-  
-    -- επαναφορά κατάστασης παιχνιδιού
+    UPDATE `players` SET `username`=NULL, `token`=NULL, `score`=0, `kseres`=0; 
     UPDATE `game_status` SET `status`='not active', `p_turn`=NULL, `result`=NULL;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `move_card` (IN `card_to_play` INT, IN `player_id` ENUM('A','B'))   BEGIN
-    -- μετακίνηση κάρτας από το χέρι στο τραπέζι
-    UPDATE board 
-    SET pos='table', 
-        weight=(SELECT IFNULL(MAX(weight),0)+1 FROM (SELECT weight FROM board) as x) 
-    WHERE card_id = card_to_play;
-
-    -- αλλαγή παίκτη που έχει σειρά
-    UPDATE game_status SET p_turn = IF(player_id='A','B','A');
 END$$
 
 DELIMITER ;
@@ -66,58 +50,58 @@ CREATE TABLE `board` (
 --
 
 INSERT INTO `board` (`card_id`, `pos`, `weight`) VALUES
-(1, 'pile_B', 0),
-(2, 'deck', NULL),
-(3, 'deck', NULL),
+(1, 'hand_A', NULL),
+(2, 'hand_A', NULL),
+(3, 'hand_A', NULL),
 (4, 'deck', NULL),
-(5, 'pile_B', 0),
-(6, 'pile_B', 0),
-(7, 'pile_B', 0),
-(8, 'pile_B', 0),
+(5, 'deck', NULL),
+(6, 'deck', NULL),
+(7, 'hand_A', NULL),
+(8, 'deck', NULL),
 (9, 'deck', NULL),
-(10, 'pile_B', 0),
+(10, 'deck', NULL),
 (11, 'deck', NULL),
-(12, 'deck', NULL),
+(12, 'table', 1),
 (13, 'deck', NULL),
-(14, 'deck', NULL),
-(15, 'pile_B', 0),
+(14, 'hand_B', NULL),
+(15, 'hand_B', NULL),
 (16, 'deck', NULL),
 (17, 'deck', NULL),
-(18, 'pile_B', 0),
-(19, 'pile_B', 0),
-(20, 'pile_B', 0),
-(21, 'deck', NULL),
+(18, 'deck', NULL),
+(19, 'table', 2),
+(20, 'deck', NULL),
+(21, 'hand_A', NULL),
 (22, 'deck', NULL),
-(23, 'deck', NULL),
+(23, 'hand_B', NULL),
 (24, 'deck', NULL),
-(25, 'table', 1),
+(25, 'deck', NULL),
 (26, 'deck', NULL),
 (27, 'deck', NULL),
 (28, 'deck', NULL),
 (29, 'deck', NULL),
 (30, 'deck', NULL),
-(31, 'pile_B', 0),
+(31, 'deck', NULL),
 (32, 'deck', NULL),
 (33, 'deck', NULL),
 (34, 'deck', NULL),
-(35, 'deck', NULL),
+(35, 'hand_B', NULL),
 (36, 'deck', NULL),
-(37, 'pile_B', 0),
+(37, 'deck', NULL),
 (38, 'deck', NULL),
 (39, 'deck', NULL),
 (40, 'deck', NULL),
 (41, 'deck', NULL),
-(42, 'deck', NULL),
-(43, 'deck', NULL),
-(44, 'pile_B', 0),
+(42, 'hand_B', NULL),
+(43, 'table', 3),
+(44, 'deck', NULL),
 (45, 'deck', NULL),
-(46, 'deck', NULL),
-(47, 'deck', NULL),
+(46, 'hand_A', NULL),
+(47, 'hand_B', NULL),
 (48, 'deck', NULL),
-(49, 'pile_B', 0),
+(49, 'deck', NULL),
 (50, 'deck', NULL),
 (51, 'deck', NULL),
-(52, 'table', 2);
+(52, 'table', 4);
 
 -- --------------------------------------------------------
 
@@ -207,7 +191,7 @@ CREATE TABLE `game_status` (
 --
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
-('not active', 'A', NULL, '2026-01-01 17:09:48');
+('started', 'B', NULL, '2026-01-07 09:31:37');
 
 -- --------------------------------------------------------
 
@@ -219,25 +203,18 @@ CREATE TABLE `players` (
   `username` varchar(50) DEFAULT NULL,
   `player` enum('A','B') NOT NULL,
   `token` varchar(100) DEFAULT NULL,
-  `last_action` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `last_action` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `score` int(11) DEFAULT 0,
+  `kseres` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
--- Επιτρέπει στη στήλη username να δέχεται NULL (για να δουλεύει το reset)
-ALTER TABLE `players` MODIFY `username` VARCHAR(50) NULL;
-
--- Επιτρέπει στη στήλη token να δέχεται NULL
-ALTER TABLE `players` MODIFY `token` VARCHAR(100) NULL;
-
--- Καθαρισμός των τωρινών δεδομένων για σιγουριά
-UPDATE `players` SET `username` = NULL, `token` = NULL;
 --
 -- Dumping data for table `players`
 --
 
-INSERT INTO `players` (`username`, `player`, `token`, `last_action`) VALUES
-(NULL, 'A', NULL, '2026-01-01 17:09:46'),
-(NULL, 'B', NULL, '2026-01-01 17:09:48');
+INSERT INTO `players` (`username`, `player`, `token`, `last_action`, `score`, `kseres`) VALUES
+('Μαρία', 'A', 'e03dcaefe11702923f1769802d57ab9d', '2026-01-07 09:31:01', 0, 0),
+('Μάριος', 'B', '949e9618b4757fbe0a024a4bfc4ba6ee', '2026-01-07 09:31:05', 0, 0);
 
 --
 -- Indexes for dumped tables
