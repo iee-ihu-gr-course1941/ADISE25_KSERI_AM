@@ -45,16 +45,17 @@ function set_user($p, $input) {
     global $mysqli;
 
     // έλεγχος αν υπάρχει ήδη ενεργός παίκτης στη θέση Α ή Β
-    $sql = 'select count(*) as c 
-            from players 
-            where player=? 
+    $sql = 'select count(*) as c
+            from players
+            where player=?
             and username is not null';
     $st = $mysqli->prepare($sql);
     $st->bind_param('s', $p);
     $st->execute();
     $res = $st->get_result();
     $r = $res->fetch_all(MYSQLI_ASSOC);
-    // σφάλμα αν υπάρχει 
+
+    // σφάλμα αν υπάρχει
     if($r[0]['c'] > 0) {
         header("HTTP/1.1 400 Bad Request");
         print json_encode(['errormesg' => "Player $p is already set. Please select another player."]);
@@ -62,13 +63,15 @@ function set_user($p, $input) {
     }
 
     // αν δεν υπάρχει ήδη εγγεγραμένος χρήστης στη θέση Α ή Β,
-    // τοτε ορίζω το username, δημιουργώ το τοκεν με τον μδ5 
-    $sql = 'update players 
-            set username=?, token=md5(CONCAT(?, NOW())), last_action=NOW()
-            where player=?';
-    $st2 = $mysqli->prepare($sql);
-    $st2->bind_param('sss', $username, $username, $p);
-    $st2->execute();
+    // τοτε ορίζω το username, δημιουργώ το τοκεν με τον μδ5
+    $sql = '
+        insert into players (player, username, token, last_action)
+        values (?, ?, md5(concat(?, now())), now())
+    ';
+
+    $st = $mysqli->prepare($sql);
+    $st->bind_param('sss', $p, $username, $username);
+    $st->execute();
 
     // ενημερωση καταστασης παιχνιδιου
     update_game_status();

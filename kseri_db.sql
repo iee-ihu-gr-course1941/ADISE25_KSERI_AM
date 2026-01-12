@@ -21,14 +21,25 @@ SET time_zone = "+00:00";
 -- Database: `kseri_db`
 --
 
-DELIMITER $$
+--DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `clean_game` ()   BEGIN
-    UPDATE `board` SET `pos`='deck', `weight`=NULL;
-    UPDATE `players` SET `username`=NULL, `token`=NULL, `score`=0, `kseres`=0; 
-    UPDATE `game_status` SET `status`='not active', `p_turn`=NULL, `result`=NULL;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `kseri`.`clean_game`()
+BEGIN
+    -- Reset board
+    UPDATE `board`
+    SET `pos` = 'deck',
+        `weight` = NULL;
+
+    -- Remove all players
+    DELETE FROM `players`;
+
+    -- Reset game status
+    UPDATE `game_status`
+    SET `status` = 'not active',
+        `p_turn` = NULL,
+        `result` = NULL;
 END$$
 
 DELIMITER ;
@@ -212,9 +223,9 @@ CREATE TABLE `players` (
 -- Dumping data for table `players`
 --
 
-INSERT INTO `players` (`username`, `player`, `token`, `last_action`, `score`, `kseres`) VALUES
-('Μαρία', 'A', 'e03dcaefe11702923f1769802d57ab9d', '2026-01-07 09:31:01', 0, 0),
-('Μάριος', 'B', '949e9618b4757fbe0a024a4bfc4ba6ee', '2026-01-07 09:31:05', 0, 0);
+--INSERT INTO `players` (`username`, `player`, `token`, `last_action`, `score`, `kseres`) VALUES
+--('Μαρία', 'A', 'e03dcaefe11702923f1769802d57ab9d', '2026-01-07 09:31:01', 0, 0),
+--('Μάριος', 'B', '949e9618b4757fbe0a024a4bfc4ba6ee', '2026-01-07 09:31:05', 0, 0);
 
 --
 -- Indexes for dumped tables
