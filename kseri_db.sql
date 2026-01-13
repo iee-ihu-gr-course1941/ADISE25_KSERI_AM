@@ -1,64 +1,28 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jan 07, 2026 at 10:31 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Clean SQL dump for XAMPP MySQL 8
+-- UTF8MB4, safe for import
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
+SET NAMES utf8mb4;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `kseri_db`
---
-
---DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `kseri`.`clean_game`()
-BEGIN
-    -- Reset board
-    UPDATE `board`
-    SET `pos` = 'deck',
-        `weight` = NULL;
-
-    -- Remove all players
-    DELETE FROM `players`;
-
-    -- Reset game status
-    UPDATE `game_status`
-    SET `status` = 'not active',
-        `p_turn` = NULL,
-        `result` = NULL;
-END$$
-
-DELIMITER ;
+-- Create and use database
+CREATE DATABASE IF NOT EXISTS `kseri_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `kseri_db`;
 
 -- --------------------------------------------------------
-
---
 -- Table structure for table `board`
---
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `board`;
 
 CREATE TABLE `board` (
   `card_id` int(11) NOT NULL,
   `pos` enum('deck','hand_A','hand_B','table','pile_A','pile_B') NOT NULL DEFAULT 'deck',
-  `weight` int(11) DEFAULT NULL
+  `weight` int(11) DEFAULT NULL,
+  PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `board`
---
+TRUNCATE TABLE `board`;
 
 INSERT INTO `board` (`card_id`, `pos`, `weight`) VALUES
 (1, 'hand_A', NULL),
@@ -115,20 +79,19 @@ INSERT INTO `board` (`card_id`, `pos`, `weight`) VALUES
 (52, 'table', 4);
 
 -- --------------------------------------------------------
-
---
 -- Table structure for table `deck`
---
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `deck`;
 
 CREATE TABLE `deck` (
-  `card_id` int(11) NOT NULL,
+  `card_id` int(11) NOT NULL AUTO_INCREMENT,
   `card_rank` enum('A','2','3','4','5','6','7','8','9','10','J','Q','K') NOT NULL,
-  `card_suit` enum('Club','Diamond','Heart','Spade') NOT NULL
+  `card_suit` enum('Club','Diamond','Heart','Spade') NOT NULL,
+  PRIMARY KEY (`card_id`),
+  UNIQUE KEY `idx_card_unique` (`card_rank`,`card_suit`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `deck`
---
+TRUNCATE TABLE `deck`;
 
 INSERT INTO `deck` (`card_id`, `card_rank`, `card_suit`) VALUES
 (1, 'A', 'Club'),
@@ -185,10 +148,9 @@ INSERT INTO `deck` (`card_id`, `card_rank`, `card_suit`) VALUES
 (52, 'K', 'Spade');
 
 -- --------------------------------------------------------
-
---
 -- Table structure for table `game_status`
---
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `game_status`;
 
 CREATE TABLE `game_status` (
   `status` enum('not active','initialized','started','ended','aborted') NOT NULL DEFAULT 'not active',
@@ -197,18 +159,15 @@ CREATE TABLE `game_status` (
   `last_change` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `game_status`
---
+TRUNCATE TABLE `game_status`;
 
 INSERT INTO `game_status` (`status`, `p_turn`, `result`, `last_change`) VALUES
 ('started', 'B', NULL, '2026-01-07 09:31:37');
 
 -- --------------------------------------------------------
-
---
 -- Table structure for table `players`
---
+-- --------------------------------------------------------
+DROP TABLE IF EXISTS `players`;
 
 CREATE TABLE `players` (
   `username` varchar(50) DEFAULT NULL,
@@ -216,51 +175,15 @@ CREATE TABLE `players` (
   `token` varchar(100) DEFAULT NULL,
   `last_action` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `score` int(11) DEFAULT 0,
-  `kseres` int(11) DEFAULT 0
+  `kseres` int(11) DEFAULT 0,
+  PRIMARY KEY (`player`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `players`
---
+TRUNCATE TABLE `players`;
 
---INSERT INTO `players` (`username`, `player`, `token`, `last_action`, `score`, `kseres`) VALUES
---('Μαρία', 'A', 'e03dcaefe11702923f1769802d57ab9d', '2026-01-07 09:31:01', 0, 0),
---('Μάριος', 'B', '949e9618b4757fbe0a024a4bfc4ba6ee', '2026-01-07 09:31:05', 0, 0);
+-- If you want initial players, uncomment and edit
+-- INSERT INTO `players` (`username`, `player`, `token`, `last_action`, `score`, `kseres`) VALUES
+-- ('Μαρία', 'A', 'e03dcaefe11702923f1769802d57ab9d', '2026-01-07 09:31:01', 0, 0),
+-- ('Μάριος', 'B', '949e9618b4757fbe0a024a4bfc4ba6ee', '2026-01-07 09:31:05', 0, 0);
 
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `board`
---
-ALTER TABLE `board`
-  ADD PRIMARY KEY (`card_id`);
-
---
--- Indexes for table `deck`
---
-ALTER TABLE `deck`
-  ADD PRIMARY KEY (`card_id`),
-  ADD UNIQUE KEY `idx_card_unique` (`card_rank`,`card_suit`);
-
---
--- Indexes for table `players`
---
-ALTER TABLE `players`
-  ADD PRIMARY KEY (`player`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `deck`
---
-ALTER TABLE `deck`
-  MODIFY `card_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -122,7 +122,7 @@ function read_status() {
 // ολικο reset , ωστε να ξεκινησει καινουριο παιχνιδι
 function reset_game_all() {
     global $mysqli;
-    $mysqli->query("CALL clean_game()");
+    $sql= 'DELETE FROM players';
     header('Content-Type: application/json');
     print json_encode(['message' => 'Game reset successfully']);
 }
