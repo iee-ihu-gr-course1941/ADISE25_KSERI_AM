@@ -1,18 +1,13 @@
 <?php
+$servername = null;  
+$username = "iee2021075";       
+$password = "Maraki2003.";      
+$dbname   = "ADISE25_KSERI_AM_db"; 
+$socket   = "/home/student/iee/2021/iee2021075/mysql/run/mysql.sock"; // path from step 1
 
-$server_name = "localhost";
-$username  = "iee2021075";
-$password  = "Maraki2003.";
-$db_name = "kseri_db";
+$conn = mysqli_connect($servername, $username, $password, $dbname, null, $socket);
 
-// create connection
-$mysqli = mysqli_connect($server_name, $username, $password, $db_name);
-
-// check connection
-
-if ($mysqli -> connect_error) {
-    die("Connection failed: " . $mysqli -> connect_error);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
 }
-
-// echo ("Connected successfully!");
-
+?>
