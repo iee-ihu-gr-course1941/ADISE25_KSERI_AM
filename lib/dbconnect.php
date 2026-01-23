@@ -2,7 +2,7 @@
 $servername = null;  
 $username = "iee2021075";       
 $password = "Maraki2003.";      
-$dbname   = "ADISE25_KSERI_AM_db"; 
+$dbname   = "kseri_db"; 
 $socket   = "/home/student/iee/2021/iee2021075/mysql/run/mysql.sock"; // path from step 1
 
 $conn = mysqli_connect($servername, $username, $password, $dbname, null, $socket);
