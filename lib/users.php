@@ -1,6 +1,8 @@
+
 <?php
 
-require_once "lib/game.php";
+require_once("lib/dbconnect.php");
+
 
 function handle_user($method, $p, $input) {
     // επιστροφή στοιχείων παίκτη

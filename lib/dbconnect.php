@@ -1,7 +1,7 @@
 <?php
 $servername = null;  
 $username = "iee2021075";       
-$password = "Maraki2003.";      
+$password = "1234";      
 $dbname   = "kseri_db"; 
 $socket   = "/home/student/iee/2021/iee2021075/mysql/run/mysql.sock"; // path from step 1
 

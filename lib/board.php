@@ -1,5 +1,6 @@
+
 <?php
-// lib/board.php
+
 
 // επιστροφη τρεχυυσας καταστασης board
 function show_board() {
