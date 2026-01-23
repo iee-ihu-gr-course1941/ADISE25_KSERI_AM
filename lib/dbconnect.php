@@ -1,8 +1,8 @@
 <?php
 
 $server_name = "localhost";
-$username  = "root";
-$password  = "";
+$username  = "iee2021075";
+$password  = "Maraki2003.";
 $db_name = "kseri_db";
 
 // create connection
