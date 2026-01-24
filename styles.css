@@ -54,7 +54,7 @@ footer {
     "header"
     "main"
     "footer";
-    grid-template-rows: 10vh auto 1fr auto;
+    grid-template-rows: 10vh auto 1fr auto;  
     height:100vh;
     /* gia decorative cards */    
     position: relative;

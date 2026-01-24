@@ -75,7 +75,8 @@ function update_status(data) {
         if (game_status.p_turn !== oldTurn) {
             fill_board();
             if (game_status.p_turn == me.player) {
-                startTimer(15);
+                startTimer(60);
+                handleEndOfGame(game_status.result);
             } else {
                 stopTimer();
             }
@@ -88,6 +89,18 @@ function update_status(data) {
     update_info();
     update_player_names();
     setTimeout(game_status_update, 4000); 
+}
+
+//Όταν το handle_end_game() στην PHP εκτελεστεί, ενημερώνει τη βάση με result='A', 'B' ή 'D'. json 
+//μεταφει πληροφορια και μεσα απο js εμφανιζει το αντιστοιχο αποτελεσμα
+function handleEndOfGame(result) {
+    if (result === 'D') {
+        draw();
+    } else if (result === me.player) {
+        winner();
+    } else {
+        loser();
+    }
 }
 
 // χρονομετρο 15 δευτερολεπτα για καθε παικτη στη σειρα του 
@@ -265,6 +278,53 @@ function login_error(data) {
     console.log("Server error:", data.responseText);
     if (x && x.errormesg) alert("Σφάλμα: " + x.errormesg);
 }
+
+function winner(){
+    alert("Συγχαρητήρια νίκησες στην ξερή!");
+    
+    $.ajax({
+        url: "kseri.php/reset",
+        method: 'POST',
+        headers: {"App-Token": me.token},
+        success: function() { 
+            alert("Το παιχνίδι επανήλθε!");
+            location.reload(); 
+        },
+        error: login_error
+    });
+}
+
+function loser(){
+    alert("Δεν πειράζει την επόμενη φορά θα είσαι πιο τυχερός!");
+    
+    $.ajax({
+        url: "kseri.php/reset",
+        method: 'POST',
+        headers: {"App-Token": me.token},
+        success: function() { 
+            alert("Το παιχνίδι επανήλθε!");
+            location.reload(); 
+        },
+        error: login_error
+    });
+}
+
+function draw(){
+    alert("Ισοπαλία!");
+    
+    $.ajax({
+        url: "kseri.php/reset",
+        method: 'POST',
+        headers: {"App-Token": me.token},
+        success: function() { 
+            alert("Το παιχνίδι επανήλθε!");
+            location.reload(); 
+        },
+        error: login_error
+    });
+}
+
+
 
 function openRules(){ $('#rules-modal').addClass('open'); }
 function closeRulesFn(){ $('#rules-modal').removeClass('open'); }
