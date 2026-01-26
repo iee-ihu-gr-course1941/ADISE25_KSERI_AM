@@ -13,6 +13,5 @@ if ($mysqli->connect_errno) {
     die("Connection failed: " . $mysqli->connect_error);
 }
 
-// Set charset to avoid Greek character issues
-$mysqli->set_charset("utf8");
+
 ?>
