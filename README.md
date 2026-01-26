@@ -100,5 +100,38 @@
 | **result** | Νικητής | `'A'`, `'B'`, `'D'` (draw) |
 | **last_change** | Timestamp | `timestamp` |
 
+## <u>Περιγραφή frontend</u>
+
+### 1. Html
+
+### 2. JavaScript
+
+| function | Description |
+| :--- | :--- | :--- |
+| **login_to_game()** | Oνομα παίκτη | 
+| **login_result()** | Ορίζει αν ο παίκτης είναι ο A ή ο B | 
+| **game_status_update()** | Μοναδικό token | 
+| **update_status(data)** | Timestamp | 
+| **handleEndOfGame(result)** | Oνομα παίκτη |
+| **startTimer(seconds)** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
+| **stopTimer()** | Μοναδικό token |
+| **fill_board()** | Timestamp |
+| **draw_board(data)** | Timestamp | 
+| **create_card_img(card, suitMap)** | Oνομα παίκτη |
+| **update_info()** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
+| **update_turn_ui(turn)** | Μοναδικό token |
+| **update_player_names()** | Timestamp |
+| **resetGame()** | Timestamp | 
+| **playCard(cardId)** | Oνομα παίκτη |
+| **login_error(data)** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
+| **winner()** | Μοναδικό token |
+| **loser()** | Timestamp |
+| **draw()** | Timestamp |
+
+
+
+
+
+
 
 
