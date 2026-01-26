@@ -1,13 +1,18 @@
 <?php
-$servername = null;  
+
+$host     = 'localhost'; 
 $username = "iee2021075";       
-$password = "1234";      
+$password = "1234";
 $dbname   = "kseri_db"; 
-$socket   = "/home/student/iee/2021/iee2021075/mysql/run/mysql.sock"; // path from step 1
+$socket   = "/home/student/iee/2021/iee2021075/mysql/run/mysql.sock";
 
-$conn = mysqli_connect($servername, $username, $password, $dbname, null, $socket);
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+$mysqli = new mysqli($host, $username, $password, $dbname, null, $socket);
+
+if ($mysqli->connect_errno) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
+
+// Set charset to avoid Greek character issues
+$mysqli->set_charset("utf8");
 ?>
