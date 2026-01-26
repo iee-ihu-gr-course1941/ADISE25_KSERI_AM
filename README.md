@@ -107,7 +107,7 @@
 ### 2. JavaScript
 
 | function | Description |
-| :--- | :--- | :--- |
+| :--- | :--- |
 | **login_to_game()** | Oνομα παίκτη | 
 | **login_result()** | Ορίζει αν ο παίκτης είναι ο A ή ο B | 
 | **game_status_update()** | Μοναδικό token | 
@@ -127,6 +127,7 @@
 | **winner()** | Μοναδικό token |
 | **loser()** | Timestamp |
 | **draw()** | Timestamp |
+
 
 
 
