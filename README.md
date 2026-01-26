@@ -113,20 +113,21 @@
 | **game_status_update()** | Μοναδικό token | 
 | **update_status(data)** | Timestamp | 
 | **handleEndOfGame(result)** | Oνομα παίκτη |
-| **startTimer(seconds)** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
-| **stopTimer()** | Μοναδικό token |
+| **startTimer(seconds)** | μετα απο 60 δεύτερα ο παίκτης χάνει την σειρά του |
+| **stopTimer()** | σταματάει το timer αν ο παίκτης προβεί σε κίνηση |
 | **fill_board()** | Timestamp |
-| **draw_board(data)** | Timestamp | 
-| **create_card_img(card, suitMap)** | Oνομα παίκτη |
-| **update_info()** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
+| **draw_board(data)** | απεικόνιση board | 
+| **create_card_img(card, suitMap)** | εικόνα για κάθε φύλλο |
+| **update_info()** | Ορίζειίναι ο A ή ο B |
 | **update_turn_ui(turn)** | Μοναδικό token |
-| **update_player_names()** | Timestamp |
-| **resetGame()** | Timestamp | 
-| **playCard(cardId)** | Oνομα παίκτη |
-| **login_error(data)** | Ορίζει αν ο παίκτης είναι ο A ή ο B |
-| **winner()** | Μοναδικό token |
-| **loser()** | Timestamp |
-| **draw()** | Timestamp |
+| **update_player_names()** | ντοματα |
+| **resetGame()** | επαναφορά παιχνιδιού εκκαθάριση db | 
+| **playCard(cardId)** | αποστολή κίνησης παίκτη |
+| **login_error(data)** | pop-up που ενημερώνει για σφαλμα στην είσοδο |
+| **winner()** | pop-up μήνυμα στον παίκτη που νίκησε |
+| **loser()** | pop-up μήνυμα στον παίκτη που έχασε|
+| **draw()** | pop-up μήνυμα που αναγράφει οτι υπήρξε ισοπαλία|
+
 
 
 
