@@ -14,6 +14,10 @@
    - <u>**[deck](#2-deck)**</u>
    - <u>**[players](#3-players)**</u>
    - <u>**[game-status](#4game-status)**</u>
+   
+- <u>**[Περιγραφή frontend](#περιγραφή-frontend)**</u>
+   - <u>**[html](#1-html)**</u>
+   - <u>**[java script](#2-java-script)**</u>
 
 ---
 
@@ -95,5 +99,6 @@
 | **p_turn** | Σειρά παίκτη | `'A'`, `'B'` |
 | **result** | Νικητής | `'A'`, `'B'`, `'D'` (draw) |
 | **last_change** | Timestamp | `timestamp` |
+
 
 
