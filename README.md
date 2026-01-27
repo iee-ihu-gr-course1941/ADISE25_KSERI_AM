@@ -104,29 +104,36 @@
 
 ### 1. Html
 
+`main_menu.html περιεχει`
+`κουμπι εισόδου που μας μεταφέρει στην δήλωση ονόματος και επιλογή παικτη αβ`
+`κουμπι που εξηγεί τους κανονες του παιχνιδιού`
+`πανω δεξια κουμπί που αλλάζει το user interface απο light σε dark mode`
+`κατω αριστερά ένα κουμπι που μεταφερει στο github repository`
+
 ### 2. JavaScript
 
 | function | Description |
 | :--- | :--- |
-| **login_to_game()** | Oνομα παίκτη | 
-| **login_result()** | Ορίζει αν ο παίκτης είναι ο A ή ο B | 
-| **game_status_update()** | Μοναδικό token | 
-| **update_status(data)** | Timestamp | 
-| **handleEndOfGame(result)** | Oνομα παίκτη |
+| **login_to_game()** | σύνδεση παιχνιδιού | 
+| **login_result()** | αποτέλεσμα αν εγινε επιτυχής η σύνδεση | 
+| **game_status_update()** | ενημερώνεται σε καθε γύρω ώστε να σηματοδοτήσει το τέλος παιχνιδιού | 
+| **update_status(data)** | ενημερώνει αν συνεχίζει το παιχνίδι ή ολοκληρώθηκε | 
+| **handleEndOfGame(result)** | βρίσκει ποις παίκτης είναι ο νικητής κτλ |
 | **startTimer(seconds)** | μετα απο 60 δεύτερα ο παίκτης χάνει την σειρά του |
 | **stopTimer()** | σταματάει το timer αν ο παίκτης προβεί σε κίνηση |
-| **fill_board()** | Timestamp |
+| **fill_board()** | γεμίζει το board|
 | **draw_board(data)** | απεικόνιση board | 
 | **create_card_img(card, suitMap)** | εικόνα για κάθε φύλλο |
-| **update_info()** | Ορίζειίναι ο A ή ο B |
-| **update_turn_ui(turn)** | Μοναδικό token |
-| **update_player_names()** | ντοματα |
+| **update_info()** | ενημερώνει για το αν ο παίκτης ειναι σε σύνδεση |
+| **update_turn_ui(turn)** | ενημερώνει ποιος παίκτης έχει σειρά |
+| **update_player_names()** | ενημέρωση ονόματος παικτών |
 | **resetGame()** | επαναφορά παιχνιδιού εκκαθάριση db | 
 | **playCard(cardId)** | αποστολή κίνησης παίκτη |
 | **login_error(data)** | pop-up που ενημερώνει για σφαλμα στην είσοδο |
 | **winner()** | pop-up μήνυμα στον παίκτη που νίκησε |
 | **loser()** | pop-up μήνυμα στον παίκτη που έχασε|
 | **draw()** | pop-up μήνυμα που αναγράφει οτι υπήρξε ισοπαλία|
+
 
 
 
