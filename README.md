@@ -14,6 +14,10 @@
    - <u>**[deck](#2-deck)**</u>
    - <u>**[players](#3-players)**</u>
    - <u>**[game-status](#4game-status)**</u>
+   
+- <u>**[Περιγραφή frontend](#περιγραφή-frontend)**</u>
+   - <u>**[html](#1-html)**</u>
+   - <u>**[java script](#2-java-script)**</u>
 
 ---
 
@@ -95,5 +99,41 @@
 | **p_turn** | Σειρά παίκτη | `'A'`, `'B'` |
 | **result** | Νικητής | `'A'`, `'B'`, `'D'` (draw) |
 | **last_change** | Timestamp | `timestamp` |
+
+## <u>Περιγραφή frontend</u>
+
+### 1. Html
+
+### 2. JavaScript
+
+| function | Description |
+| :--- | :--- |
+| **login_to_game()** | Oνομα παίκτη | 
+| **login_result()** | Ορίζει αν ο παίκτης είναι ο A ή ο B | 
+| **game_status_update()** | Μοναδικό token | 
+| **update_status(data)** | Timestamp | 
+| **handleEndOfGame(result)** | Oνομα παίκτη |
+| **startTimer(seconds)** | μετα απο 60 δεύτερα ο παίκτης χάνει την σειρά του |
+| **stopTimer()** | σταματάει το timer αν ο παίκτης προβεί σε κίνηση |
+| **fill_board()** | Timestamp |
+| **draw_board(data)** | απεικόνιση board | 
+| **create_card_img(card, suitMap)** | εικόνα για κάθε φύλλο |
+| **update_info()** | Ορίζειίναι ο A ή ο B |
+| **update_turn_ui(turn)** | Μοναδικό token |
+| **update_player_names()** | ντοματα |
+| **resetGame()** | επαναφορά παιχνιδιού εκκαθάριση db | 
+| **playCard(cardId)** | αποστολή κίνησης παίκτη |
+| **login_error(data)** | pop-up που ενημερώνει για σφαλμα στην είσοδο |
+| **winner()** | pop-up μήνυμα στον παίκτη που νίκησε |
+| **loser()** | pop-up μήνυμα στον παίκτη που έχασε|
+| **draw()** | pop-up μήνυμα που αναγράφει οτι υπήρξε ισοπαλία|
+
+
+
+
+
+
+
+
 
 
