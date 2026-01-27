@@ -20,18 +20,17 @@ function show_status() {
 
 function update_game_status() {
     global $mysqli;
-    // διαβάζω τρέχουσα κατάσταση 
-    $status = read_status();
+    $status = read_status(); // Διάβασμα τρέχουσας κατάστασης
     
-    // αν ενας παικτης δεν ειναι ενεργος για 15 λεπτα -> abord game
+    // 1. Έλεγχος Αδράνειας (15 λεπτά)
     $sql = 'SELECT count(*) as aborted FROM players WHERE last_action < (NOW() - INTERVAL 15 MINUTE) AND username IS NOT NULL';
     $res_ab = $mysqli->query($sql)->fetch_assoc();
     if($res_ab['aborted'] > 0) { 
-        $mysqli->query("CALL clean_game()"); 
+        $mysqli->query("UPDATE game_status SET status='aborted'"); 
         return; 
     }
 
-   // μέτρηση ενεργών παικτών στο τραπεζι
+    // 2. Καταμέτρηση παικτών
     $sql = 'SELECT count(*) as c FROM players WHERE username IS NOT NULL';
     $res_active = $mysqli->query($sql)->fetch_assoc();
     $active_players = $res_active['c'];
@@ -39,49 +38,38 @@ function update_game_status() {
     $new_status = $status['status'];
     $new_turn = $status['p_turn'];
 
-    //διαχειριση καταστασης.
-    // αν υπαρχει ενας ενεργος παικτης 
+    // 3. Διαχείριση Κατάστασης (Logic Flow)
     if($active_players == 0) { 
         $new_status = 'not active'; 
-    }
-    // αν υπαρχει ενας ενεργος παικτης
-    else if($active_players == 1) { 
+    } else if($active_players == 1) { 
         $new_status = 'initialized'; 
-    }
-    // αν υπαρχουν 2 ενεργοι παικτες
-    else if($active_players == 2 && ($status['status'] == 'not active' || $status['status'] == 'initialized')) {
-        // μολις συνδεθουν και οι 2 παικτες, μοιρασε τα φυλλα
+    } else if ($active_players == 2 && $status['status'] !== 'started' && $status['status'] !== 'ended') {
+        // ΕΔΩ ξεκινάει το παιχνίδι για πρώτη φορά
         $new_status = 'started';
         $new_turn = 'A';
-        reset_board(); // Αρχικό μοίρασμα φύλλων
-        $mysqli->query("UPDATE game_status SET last_change = NOW()"); // Αρχικοποίηση χρόνου για τον παίκτη Α
+        reset_board(); // Αρχικό μοίρασμα
     }
 
-    // αν το παιχνιδι εχει αρχισει
+    // 4. Ενέργειες κατά τη διάρκεια του παιχνιδιού
     if($new_status == 'started') {
-        
-        // αν ενας παικτης στη σειρα του δε παιξει για 15 δευτερολεπτα, εμταβιβασε τη σειρα του στον αλλο παικτη
-        $mysqli->query("UPDATE game_status SET p_turn = IF(p_turn='A','B','A'), last_change = NOW() 
-                        WHERE status='started' AND last_change < (NOW() - INTERVAL 15 SECOND)");
-        
-        $res_turn = $mysqli->query("SELECT p_turn FROM game_status");
-        $new_turn = $res_turn->fetch_assoc()['p_turn'];
+        // Έλεγχος για timeout παίκτη (15 δευτερόλεπτα)
+        // Προσοχή: Στο script.js έχεις 60'', καλό είναι να τα ταυτίσεις!
+        if ($status['last_change'] < date('Y-m-d H:i:s', strtotime('-15 seconds'))) {
+             $new_turn = ($status['p_turn'] == 'A') ? 'B' : 'A';
+        }
 
-        // οταν τελειωσουν τα φυλλα των παικτων, μοιρασε τους καινουρια
-        deal_cards();
+        deal_cards(); // Αν άδειασαν τα χέρια, δώσε νέα
 
-        // αν το κλειστο ντεκ τελειωσει -> τελειωνει το παιχνιδι
+        // Έλεγχος τέλους παιχνιδιού
         $res_end = $mysqli->query("SELECT COUNT(*) as c FROM board WHERE pos IN ('deck', 'hand_A', 'hand_B')");
         if($res_end->fetch_assoc()['c'] == 0) {
-            $new_status = 'ended';
-            // υπολογισμος τελικων ποντων
             handle_end_game(); 
-            return;
+            return; // Η handle_end_game θα κάνει το τελικό update
         }
     }
 
-    // τελικη ενημερωση βασης
-    $sql = 'UPDATE game_status SET status=?, p_turn=?';
+    // 5. ΤΕΛΙΚΟ UPDATE στη βάση - Μία φορά στο τέλος!
+    $sql = 'UPDATE game_status SET status=?, p_turn=?, last_change = NOW()';
     $st = $mysqli->prepare($sql);
     $st->bind_param('ss', $new_status, $new_turn);
     $st->execute();

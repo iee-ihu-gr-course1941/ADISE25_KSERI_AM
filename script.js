@@ -1,7 +1,7 @@
 let me = {}; 
 let game_status = {}; 
 let board = {};
-// μεταβλητή για το χρονόμετρο 15''
+// μεταβλητή για το χρονόμετρο 60''
 let turnTimer = null; 
 
 
@@ -13,6 +13,19 @@ $(function() {
     $('#rulesBtn').click(openRules);
     $('#closeRules').click(closeRulesFn);
     $('#resetBtn').click(resetGame);
+
+    // gia theme swtich
+  $('#toggle-theme-icon').click(function(e) {
+    e.preventDefault();
+    $('body').toggleClass('light-mode');
+    
+    // apothikeysi protimisis
+    if($('body').hasClass('light-mode')) {
+        localStorage.setItem('theme', 'light');
+    } else {
+        localStorage.setItem('theme', 'dark');
+    }
+});
 });
 
 function login_to_game() {
@@ -76,14 +89,15 @@ function update_status(data) {
             fill_board();
             if (game_status.p_turn == me.player) {
                 startTimer(60);
-                handleEndOfGame(game_status.result);
+                
             } else {
                 stopTimer();
             }
         }
     } else if (game_status.status == 'ended') {
         stopTimer();
-        alert("Το παιχνίδι τελείωσε!");
+        handleEndOfGame(game_status.result);
+        console.log("Το παιχνίδι τελείωσε!");
     }
 
     update_info();
@@ -94,6 +108,7 @@ function update_status(data) {
 //Όταν το handle_end_game() στην PHP εκτελεστεί, ενημερώνει τη βάση με result='A', 'B' ή 'D'. json 
 //μεταφει πληροφορια και μεσα απο js εμφανιζει το αντιστοιχο αποτελεσμα
 function handleEndOfGame(result) {
+    if (!result) return;
     if (result === 'D') {
         draw();
     } else if (result === me.player) {
@@ -204,7 +219,12 @@ function create_card_img(card, suitMap) {
 }
 
 function update_info() {
-    let status_msg = (game_status.status == 'started') ? "Σειρά: " + game_status.p_turn : "Αναμονή...";
+    let turnText = game_status.p_turn;
+    if (turnText === null || turnText === undefined) {
+        turnText = "Αναμονή...";
+    }
+    
+    let status_msg = (game_status.status == 'started') ? "Σειρά: " + turnText : "Περιμένουμε παίκτη...";
     $('#game_info').html("Είσαι ο: " + me.player + "<br>" + status_msg);
     update_turn_ui(game_status.p_turn);
 }

@@ -60,7 +60,7 @@ function set_user($p, $input) {
     // σφάλμα αν υπάρχει
     if($r[0]['c'] > 0) {
         header("HTTP/1.1 400 Bad Request");
-        print json_encode(['errormesg' => "Player $p is already set. Please select another player."]);
+        print json_encode(['errormesg' => "Ο παίκτης $p έχει ήδη ορισθεί. Παρακαλώ επέλεξε έναν άλλο παίκτη."]);
         exit;
     }
 

@@ -1,4 +1,13 @@
 /* universal styles */
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin:0;
+  padding:0;
+}
+
+html, body {
+    height: 100%;
+}
 
 :root {
     /* default (dark) mode color palette */
@@ -6,8 +15,9 @@
   --panel:#2a2e34;
   --muted:#9aa3ad;
   --accent:#ff4d4d;
-    --nav: #2a2c32;       
-    
+    --nav: #2a2c32;   
+    --border-color: rgba(255, 255, 255, 0.1);    
+    --modal-bg: linear-gradient(180deg,#0f1316,#0b0f12);
     /* visuals */
     --glow: 0 6px 20px rgba(255, 77, 77, 0.12); 
     --glass: rgba(255, 255, 255, 0.03); 
@@ -18,15 +28,35 @@
     font-size: 16px; 
 }
 
-
-*, *::before, *::after { 
-  box-sizing: border-box; 
-  margin:0;
-  padding:0;
+/* light mode */
+body.light-mode {
+    --bg: #f0f2f5;           
+    --panel: #D9D9D9;        
+    --muted: #65676b;
+    --accent: #d93025;       
+    --nav: #D9D9D9;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --modal-bg: #ffffff;
+    /* visuals */
+    --text-color: #1c1e21;  
+    --glow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    --glass: rgba(0, 0, 0, 0.05);
 }
-/* ---- DARK MODE TOGGLE ---------- */
-html, body {
-    height: 100%;
+
+body.light-mode .decorative-card {
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode #card-input {
+    background-color: #f0f2f5;
+    color: #1c1e21;
+    border: 1px solid #ddd;
+}
+body.light-mode .grid-container {
+    background: var(--bg); /* Αφαιρούμε τα gradients για πιο καθαρό look */
+}
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* grid */
@@ -36,12 +66,18 @@ nav {
 header {
     grid-area: header;
     text-align: center;
+    padding: 40px 20px 10px 20px;
+}
+header h1 {
+    font-size: 2rem;
+    color: var(--text-color);
 }
 main {
     grid-area:main;
 }
 footer {
     grid-area: footer;
+    
 }
 .grid-container {
   background: radial-gradient(1200px 600px at 10% 10%, rgba(255,77,77,0.03), transparent),
@@ -54,12 +90,12 @@ footer {
     "header"
     "main"
     "footer";
-    grid-template-rows: 10vh auto 1fr auto;  
-    height:100vh;
+    grid-template-rows: auto auto 1fr auto; 
+    height: 100vh;
+    width:100vw;
     /* gia decorative cards */    
-    position: relative;
-    overflow: hidden;
-    
+   position: relative;
+   overflow: hidden;
 }
 
 /* theme switch icon styling */
@@ -108,20 +144,26 @@ main#main-content {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-top: 20px;
+    
+    overflow: hidden;
 }
 
 .card {
     background-color: var(--panel);
-    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border: 1px solid var(--border-color);
     box-shadow: var(--glow); 
    /*positioning */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 100px 170px;
+    padding: 60px 40px;
     gap: 20px;
-    border-radius: var(--radius); 
+    width: 100%;
+    max-width:450px;
+    border-radius: var(--radius);
+    margin:auto; 
 }
 
 /* button styling */
@@ -151,7 +193,7 @@ button:active {
 /* decorative cards */
 .decorative-card {
     /* removed from grid layout */
-    position: fixed; 
+    position: absolute; 
     z-index: 2; 
   
     width: 130px;
@@ -202,7 +244,7 @@ button:active {
   width:100%;
   max-width:720px;
   
-  background:linear-gradient(180deg,#0f1316,#0b0f12);
+  background:var(--modal-bg);
   border-radius:14px;
   padding:22px;
  
@@ -220,8 +262,8 @@ button:active {
 .rules-list li {
   padding:10px;
   border-radius:10px;
-  background:linear-gradient(180deg, rgb(0, 0, 0), transparent);
-  border:1px solid rgba(255,255,255,0.02)
+  background: var(--panel);
+  border: 1px solid var(--border-color);
 }
 
 .rules-list strong {
@@ -238,7 +280,8 @@ button:active {
     display: flex;
     justify-content: center;
     gap: 10px;
-    min-height: 120px;
+    min-height: 160px;
+    align-items: flex-end;
     padding: 20px;
 }
 
@@ -247,8 +290,10 @@ button:active {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    gap: 40px;
+    min-height: 100%;
+    width:100%;
+    gap: 10px;
+    padding: 20px 0;
 }
 
 #table-area {
@@ -300,7 +345,7 @@ button:active {
 .card_img, .card_img_back {
     width: 80px;
     height: auto;
-    border-radius: 5px;
+    border-radius: 8px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
     cursor: pointer;
     transition: transform 0.2s;
@@ -356,7 +401,7 @@ button:active {
 #card-input {
     padding: 10px 15px;
     font-size: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border:1px solid var(--border-color);
     border-radius: 8px;
     background-color: rgba(255, 255, 255, 0.05);
     color: var(--text-color);
@@ -377,4 +422,16 @@ button:active {
 #play-btn {
     padding: 10px 25px;
     font-size: 16px;
+}
+
+/* input field styling */
+
+input {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+}
+input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 15px rgba(255, 77, 77, 0.2);
 }
